@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AudioYatra — Listen • Explore • Discover</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z'/><circle cx='12' cy='10' r='3' fill='white'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand" id="brandLogo">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>AudioYatra</h1>
+          <span>Listen • Explore • Discover</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Nav Pills -->
+    <nav class="nav-pills" id="navTabs">
+      <button class="nav-pill active" data-view="home-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Home
+      </button>
+      <button class="nav-pill" data-view="explore-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
+        Explore
+      </button>
+      <button class="nav-pill" data-view="trips-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        My Trips
+      </button>
+      <button class="nav-pill" data-view="favorites-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        Favorites <span class="badge-count" id="favBadgeCount">0</span>
+      </button>
+      <button class="nav-pill" data-view="recent-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Recent
+      </button>
+    </nav>
+
+    <!-- Right Controls -->
+    <div class="header-right">
+      <div class="search-input-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="topSearchInput" placeholder="Search any place...">
+        <div id="searchSuggestionsList" class="search-suggestions-dropdown"></div>
+      </div>
+
+      <div class="lang-selector-pill" id="globalLangPill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <select id="globalLangSelect">
+          <option value="English" selected>English</option>
+          <option value="Hindi">हिंदी (Hindi)</option>
+          <option value="Tamil">தமிழ் (Tamil)</option>
+          <option value="Telugu">తెలుగు (Telugu)</option>
+        </select>
+      </div>
+
+      <button class="profile-avatar-btn" id="profileBtn" title="Travel Profile & Passport">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="main-viewport" id="mainViewport">
+
+    <!-- 1. HOME VIEW -->
+    <section id="home-view" class="view-panel active">
+      <div class="hero-discovery-banner">
+        <div class="hero-bg-overlay"></div>
+        <img class="hero-bg-image" id="heroBgImage" src="https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1600&q=80" alt="AudioYatra Discovery" onerror="this.style.display='none'">
+        
+        <div class="hero-content">
+          <span class="badge-pill">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            AI-Powered Audio Travel Guide
+          </span>
+          <h2 class="hero-title">Discover the World<br>Through <span>Stories</span></h2>
+          <p class="hero-subtitle">Listen to fascinating stories, history, and local insights about amazing places around the world in your language.</p>
+
+          <div class="hero-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="heroSearchInput" placeholder="Search any place... (e.g., Taj Mahal, Eiffel Tower, Hampi)">
+            <button id="heroSearchBtn" class="primary-btn">Search <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+          </div>
+
+          <!-- Region Filter Chips -->
+          <div class="filter-chips-row" id="regionChips">
+            <button class="chip active" data-region="All">⊞ All</button>
+            <button class="chip" data-region="India">🏛️ India</button>
+            <button class="chip" data-region="Asia">⛩️ Asia</button>
+            <button class="chip" data-region="Europe">🏰 Europe</button>
+            <button class="chip" data-region="Americas">🗽 Americas</button>
+            <button class="chip" data-region="Africa">🔺 Africa</button>
+            <button class="chip" data-region="Oceania">🌊 Oceania</button>
+          </div>
+        </div>
+
+        <div class="hero-quote-card">
+          <div class="sound-wave-icon">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p>“Not just a destination, but a story waiting to be heard.”</p>
+          <small>— AudioYatra</small>
+        </div>
+      </div>
+
+      <!-- PLACE OF THE DAY CARD -->
+      <div class="potd-banner" id="potdBanner">
+        <div class="potd-badge">🌟 Place of the Day</div>
+        <div class="potd-content">
+          <h3 id="potdTitle">Loading...</h3>
+          <p id="potdHook">Discovering today's featured landmark...</p>
+          <button class="secondary-btn" id="potdListenBtn">Listen Audio Guide Now →</button>
+        </div>
+      </div>
+
+      <!-- FEATURED DESTINATIONS ROW -->
+      <div class="featured-section">
+        <div class="section-header">
+          <div>
+            <h3><span class="star-icon">★</span> Featured Destinations</h3>
+            <p>Handpicked places to start your journey</p>
+          </div>
+          <button class="view-all-link" id="viewAllFeaturedBtn">View All Places →</button>
+        </div>
+        <div class="place-cards-carousel" id="featuredCardsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- BOTTOM FEATURE TICKER -->
+      <div class="bottom-features-ticker">
+        <div class="feature-item">
+          <span class="feat-icon">🎙️</span>
+          <div>
+            <strong>Multilingual Audio</strong>
+            <small>English, हिंदी, தமிழ், తెలుగు</small>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">👥</span>
+          <div>
+            <strong>AI Travel Guides</strong>
+            <small>5 Unique Personalities</small>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">📑</span>
+          <div>
+            <strong>Plan Your Visit</strong>
+            <small>Tips, Food, Nearby Places</small>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">💬</span>
+          <div>
+            <strong>Interactive Q&amp;A</strong>
+            <small>Ask Anything in Voice or Text</small>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">🏆</span>
+          <div>
+            <strong>Fun Quizzes</strong>
+            <small>Test Your Knowledge</small>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feat-icon">🗺️</span>
+          <div>
+            <strong>Build Your Trip</strong>
+            <small>Create Multi-Stop Tours</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. EXPLORE VIEW -->
+    <section id="explore-view" class="view-panel">
+      <div class="explore-header">
+        <h2>Explore Destinations</h2>
+        <p>Browse through 30+ world-famous monuments, historical wonders, and natural paradises.</p>
+        
+        <div class="explore-filters">
+          <div class="search-box-wide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="exploreSearchInput" placeholder="Filter by place name, city, or country...">
+          </div>
+
+          <div class="category-pills" id="categoryFilterContainer">
+            <button class="cat-pill active" data-cat="all">All Categories</button>
+            <button class="cat-pill" data-cat="Historical">🏛️ Historical</button>
+            <button class="cat-pill" data-cat="Architecture">🗼 Architecture</button>
+            <button class="cat-pill" data-cat="Spiritual">🛕 Spiritual</button>
+            <button class="cat-pill" data-cat="Nature">🏔️ Nature</button>
+            <button class="cat-pill" data-cat="City">🏙️ City</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="places-grid" id="explorePlacesGrid">
+        <!-- Grid filled by JS -->
+      </div>
+    </section>
+
+    <!-- 3. PLACE DASHBOARD / DETAIL VIEW -->
+    <section id="place-dashboard-view" class="view-panel">
+      <div class="dashboard-layout">
+        
+        <!-- LEFT SIDEBAR -->
+        <aside class="dashboard-sidebar">
+          <button class="back-link-btn" id="backToExploreBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Explore
+          </button>
+
+          <div class="sidebar-place-card" id="sidebarPlaceCard">
+            <div class="sidebar-place-img-wrapper">
+              <img id="sidebarPlaceImg" src="" alt="Place" referrerpolicy="no-referrer">
+              <div class="fallback-gradient" id="sidebarPlaceFallback"></div>
+            </div>
+            <div class="sidebar-place-meta">
+              <h4 id="sidebarPlaceName">Taj Mahal</h4>
+              <p id="sidebarPlaceCity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg> <span id="sidebarPlaceLocationText">Agra, India</span></p>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav">
+            <button class="side-nav-btn active" data-subview="audio-guide-tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+              Audio Guide
+            </button>
+            <button class="side-nav-btn" data-subview="ask-guide-tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Ask the Guide
+            </button>
+            <button class="side-nav-btn" data-subview="plan-visit-tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Plan Your Visit
+            </button>
+            <button class="side-nav-btn" data-subview="quiz-tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              Quiz Mode
+            </button>
+            <button class="side-nav-btn" data-subview="nearby-tab">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              Nearby Places
+            </button>
+          </nav>
+
+          <div class="sidebar-quick-info">
+            <h5><span>⚡</span> Quick Visit Details</h5>
+            <div class="quick-info-row">
+              <span class="icon">📅</span>
+              <div>
+                <small>Best Time</small>
+                <span id="quickBestTime">Oct – March</span>
+              </div>
+            </div>
+            <div class="quick-info-row">
+              <span class="icon">⏱️</span>
+              <div>
+                <small>Visit Duration</small>
+                <span id="quickDuration">2 – 3 hours</span>
+              </div>
+            </div>
+            <div class="quick-info-row">
+              <span class="icon">🎟️</span>
+              <div>
+                <small>Entry Fee</small>
+                <span id="quickFee">Standard entry tickets</span>
+              </div>
+            </div>
+            <div class="quick-info-row">
+              <span class="icon">🕒</span>
+              <div>
+                <small>Open Hours</small>
+                <span id="quickHours">6:00 AM – 6:00 PM</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CENTER WORKSPACE -->
+        <div class="dashboard-main-content">
+
+          <!-- PLACE HERO BANNER -->
+          <div class="place-hero-banner" id="placeHeroBanner">
+            <div class="hero-image-container">
+              <img id="detailHeroImage" src="" alt="Landmark" referrerpolicy="no-referrer">
+              <div class="hero-overlay-gradient"></div>
+            </div>
+            <div class="place-banner-meta">
+              <div class="banner-top-actions">
+                <span class="loc-tag" id="detailPlaceLocation">Agra, India</span>
+                <div class="action-buttons-group">
+                  <button class="ghost-btn" id="favToggleBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    <span id="favBtnText">Add to Favorites</span>
+                  </button>
+                  <button class="ghost-btn" id="addToTripBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    <span>Add to Trip</span>
+                  </button>
+                </div>
+              </div>
+              <h2 id="detailPlaceTitle">Taj Mahal</h2>
+              <p id="detailPlaceHook">A timeless symbol of love, architecture and India's rich heritage.</p>
+              <div class="tags-container" id="detailPlaceTags">
+                <span class="tag-badge">🏛️ Historical</span>
+                <span class="tag-badge">UNESCO Site</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-VIEWS CONTAINER -->
+          <div class="subviews-container">
+
+            <!-- 1. AUDIO GUIDE TAB -->
+            <div id="audio-guide-tab" class="subview active">
+              <div class="split-columns">
+                <div class="left-col">
+                  <!-- Generator Controls -->
+                  <div class="glass-card generator-card">
+                    <div class="card-head">
+                      <h3>Generate Audio Guide</h3>
+                      <button class="text-btn" id="resetOptionsBtn">⟲ Reset</button>
+                    </div>
+
+                    <div class="options-grid">
+                      <div class="control-group">
+                        <label>Language</label>
+                        <select id="guideLang">
+                          <option value="English" selected>English</option>
+                          <option value="Hindi">हिंदी (Hindi)</option>
+                          <option value="Tamil">தமிழ் (Tamil)</option>
+                          <option value="Telugu">తెలుగు (Telugu)</option>
+                        </select>
+                      </div>
+
+                      <div class="control-group">
+                        <label>Voice</label>
+                        <select id="guideVoice">
+                          <option value="Matthew">Matthew (Male)</option>
+                          <option value="Alicia">Alicia (Female)</option>
+                        </select>
+                      </div>
+
+                      <div class="control-group">
+                        <label>Tour Style</label>
+                        <select id="guideStyle">
+                          <option value="Classic">Classic Guide</option>
+                          <option value="Storyteller" selected>Storyteller</option>
+                          <option value="Kids">Kids Friendly</option>
+                          <option value="Quick Facts">Quick Facts</option>
+                          <option value="Funny Local">Funny Local</option>
+                        </select>
+                      </div>
+
+                      <div class="control-group">
+                        <label>Length</label>
+                        <select id="guideLength">
+                          <option value="Quick">Quick (~30s)</option>
+                          <option value="Summary" selected>Summary (~90s)</option>
+                          <option value="Detailed">Detailed (~3m)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button class="primary-btn block-btn generate-btn" id="generateGuideBtn">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>Generate Audio Guide</span>
+                    </button>
+                  </div>
+
+                  <!-- Audio Player Console -->
+                  <div class="glass-card player-card" id="playerCard">
+                    <div class="player-top">
+                      <div class="track-info">
+                        <div class="sound-bars" id="audioSoundBars">
+                          <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div>
+                          <strong id="playingTitle">Audio Guide Narrative</strong>
+                          <small id="playingMeta">Ready to play</small>
+                        </div>
+                      </div>
+                      <div class="speed-badge" id="speedBadge">1.0x</div>
+                    </div>
+
+                    <!-- Visual Progress Bar -->
+                    <div class="progress-bar-container">
+                      <input type="range" id="audioSeekSlider" value="0" min="0" max="100" step="0.1">
+                      <div class="time-labels">
+                        <span id="currentTimeLabel">00:00</span>
+                        <span id="durationLabel">00:00</span>
+                      </div>
+                    </div>
+
+                    <!-- Player Control Buttons -->
+                    <div class="player-controls">
+                      <button class="icon-btn" id="rewind10Btn" title="Rewind 10s">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19l-9-7 9-7v14zM22 19l-9-7 9-7v14z"/></svg>
+                      </button>
+                      <button class="play-main-btn" id="mainPlayPauseBtn" title="Play / Pause">
+                        <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="pause-icon hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                      </button>
+                      <button class="icon-btn" id="forward10Btn" title="Forward 10s">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 5l9 7-9 7V5zM2 5l9 7-9 7V5z"/></svg>
+                      </button>
+                    </div>
+
+                    <!-- Speed & Volume Bar -->
+                    <div class="player-sub-controls">
+                      <div class="sub-ctrl-item">
+                        <label>Speed:</label>
+                        <input type="range" id="speedSlider" min="0.8" max="1.6" step="0.1" value="1.0">
+                      </div>
+                      <div class="sub-ctrl-item">
+                        <label>Vol:</label>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column: Interactive Script -->
+                <div class="right-col">
+                  <div class="glass-card transcript-card">
+                    <div class="card-head">
+                      <h3>Audio Script &amp; Story</h3>
+                      <div class="transcript-actions">
+                        <button class="icon-text-btn" id="copyScriptBtn" title="Copy Script">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                    <div class="script-text-body" id="scriptBody">
+                      <p class="placeholder-text">Click <strong>"Generate Audio Guide"</strong> above to craft an AI narrative audio story tailored to your language and preference.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. ASK THE GUIDE TAB -->
+            <div id="ask-guide-tab" class="subview">
+              <div class="glass-card chat-wrapper">
+                <div class="chat-header">
+                  <div class="guide-avatar">
+                    <span id="guideAvatarEmoji">🎙️</span>
+                  </div>
+                  <div>
+                    <h3 id="chatGuideName">AudioYatra AI Companion</h3>
+                    <small id="chatGuideStatus">Ask anything about history, secrets, architecture, or visiting tips!</small>
+                  </div>
+                </div>
+
+                <div class="preset-questions-bar" id="presetQuestionsBar">
+                  <button class="preset-q-btn" data-q="Why was this landmark originally built?">Why was this place built?</button>
+                  <button class="preset-q-btn" data-q="What architectural secret does it hold?">Architectural secrets</button>
+                  <button class="preset-q-btn" data-q="What is the best photographic angle here?">Best photography spot</button>
+                  <button class="preset-q-btn" data-q="What are the best local dishes to eat nearby?">Best local food nearby</button>
+                </div>
+
+                <div class="chat-messages-area" id="chatMessagesArea">
+                  <div class="msg guide-msg">
+                    <p>Namaste! I am your AI Guide for this site. What would you like to know?</p>
+                  </div>
+                </div>
+
+                <div class="chat-input-bar">
+                  <button class="mic-btn" id="voiceInputBtn" title="Speak Question">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                  </button>
+                  <input type="text" id="chatInputText" placeholder="Type your question here...">
+                  <button class="primary-btn" id="sendChatBtn">Send</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. PLAN YOUR VISIT TAB -->
+            <div id="plan-visit-tab" class="subview">
+              <div class="plan-visit-grid">
+                <div class="glass-card visit-card">
+                  <h4>📍 Essential Information</h4>
+                  <ul class="info-list">
+                    <li><strong>Best Season:</strong> <span id="visitBestTime">—</span></li>
+                    <li><strong>Typical Duration:</strong> <span id="visitDuration">—</span></li>
+                    <li><strong>Entry Fee:</strong> <span id="visitFee">—</span></li>
+                    <li><strong>Operating Hours:</strong> <span id="visitHours">—</span></li>
+                    <li><strong>Dress Code:</strong> <span id="visitDress">—</span></li>
+                    <li><strong>Visitor Rules:</strong> <span id="visitRules">—</span></li>
+                  </ul>
+                </div>
+
+                <div class="glass-card visit-card">
+                  <h4>💡 Insider Visitor Tips</h4>
+                  <div id="visitTipsList" class="tips-container">
+                    <!-- Tips JS -->
+                  </div>
+                </div>
+
+                <div class="glass-card visit-card">
+                  <h4>💎 Hidden Gems</h4>
+                  <div id="visitGemsList" class="gems-container">
+                    <!-- Gems JS -->
+                  </div>
+                </div>
+
+                <div class="glass-card visit-card">
+                  <h4>🍛 Local Culinary Delights</h4>
+                  <div id="visitFoodList" class="food-container">
+                    <!-- Food JS -->
+                  </div>
+                </div>
+
+                <div class="glass-card visit-card full-span">
+                  <h4>🔍 Myth vs. Fact</h4>
+                  <div class="myth-fact-box" id="mythFactBox">
+                    <div class="myth-side">
+                      <span class="tag myth-tag">❌ Common Myth</span>
+                      <p id="mythText">Myth text will appear here.</p>
+                    </div>
+                    <div class="fact-side">
+                      <span class="tag fact-tag">✅ Historical Fact</span>
+                      <p id="factText">Fact text will appear here.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. QUIZ MODE TAB -->
+            <div id="quiz-tab" class="subview">
+              <div class="glass-card quiz-card" id="quizCard">
+                <div class="quiz-header">
+                  <div>
+                    <h3>Monument Knowledge Quiz</h3>
+                    <p>Test your knowledge about this landmark!</p>
+                  </div>
+                  <div class="score-pill" id="quizScorePill">Score: 0/0</div>
+                </div>
+
+                <div id="quizContainer">
+                  <p class="placeholder-text">Generate an Audio Guide first or click Start Quiz to generate trivia questions!</p>
+                  <button class="primary-btn" id="startQuizBtn">Start Quiz</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. NEARBY PLACES TAB -->
+            <div id="nearby-tab" class="subview">
+              <div class="glass-card nearby-card">
+                <h3>Nearby Attractions &amp; Highlights</h3>
+                <p>Discover interesting spots close to this landmark.</p>
+
+                <div class="nearby-grid" id="nearbyGrid">
+                  <!-- Nearby JS -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MY TRIPS VIEW -->
+    <section id="trips-view" class="view-panel">
+      <div class="trips-container">
+        <div class="trips-header">
+          <h2>AI Trip Planner &amp; Itinerary</h2>
+          <p>Select your favorite places and build an optimized multi-day travel itinerary with calculated distances.</p>
+        </div>
+
+        <div class="trip-builder-grid">
+          <div class="glass-card trip-form-card">
+            <h3>Configure Your Trip</h3>
+            <div class="control-group">
+              <label>Select Places for Itinerary:</label>
+              <div class="place-selector-box" id="tripPlaceSelector">
+                <!-- Checkbox list JS -->
+              </div>
+            </div>
+
+            <div class="options-grid">
+              <div class="control-group">
+                <label>Trip Duration (Days)</label>
+                <input type="number" id="tripDaysInput" min="1" max="10" value="2">
+              </div>
+
+              <div class="control-group">
+                <label>Pace</label>
+                <select id="tripPaceSelect">
+                  <option value="Relaxed">Relaxed (4 hrs/day)</option>
+                  <option value="Moderate" selected>Moderate (6 hrs/day)</option>
+                  <option value="Packed">Packed (8 hrs/day)</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="primary-btn block-btn" id="buildTripBtn">
+              🚀 Generate Smart Itinerary
+            </button>
+          </div>
+
+          <div class="glass-card itinerary-results-card">
+            <div class="card-head">
+              <h3>Optimized Itinerary Plan</h3>
+              <span class="badge-pill" id="tripDistanceBadge">0.0 km total</span>
+            </div>
+            
+            <div id="itineraryOutput" class="itinerary-output">
+              <p class="placeholder-text">Select places on the left and click <strong>"Generate Smart Itinerary"</strong> to create your custom route.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. FAVORITES VIEW -->
+    <section id="favorites-view" class="view-panel">
+      <div class="favorites-container">
+        <div class="section-header">
+          <div>
+            <h2>My Favorite Places</h2>
+            <p>Your saved bookmarks and quick-access destinations.</p>
+          </div>
+        </div>
+        <div class="places-grid" id="favoritesGrid">
+          <!-- JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. RECENT VIEW -->
+    <section id="recent-view" class="view-panel">
+      <div class="recent-container">
+        <div class="section-header">
+          <div>
+            <h2>Recently Listened Guides</h2>
+            <p>Revisit audio guide narratives you listened to recently.</p>
+          </div>
+          <button class="text-btn" id="clearRecentBtn">Clear History</button>
+        </div>
+        <div class="recent-list" id="recentList">
+          <!-- JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PASSPORT & PROFILE MODAL -->
+  <div class="modal-backdrop hidden" id="profileModal">
+    <div class="modal-card profile-modal-card">
+      <button class="modal-close-btn" id="closeProfileModal">&times;</button>
+      <div class="passport-header">
+        <div class="passport-stamp-icon">🛂</div>
+        <div>
+          <h3>AudioYatra Travel Passport</h3>
+          <p id="userRankBadge">Rank: Cultural Voyager</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <strong id="statPlacesCount">0</strong>
+          <small>Places Explored</small>
+        </div>
+        <div class="stat-box">
+          <strong id="statMinsCount">0</strong>
+          <small>Minutes Listened</small>
+        </div>
+        <div class="stat-box">
+          <strong id="statQuizzesCount">0</strong>
+          <small>Quizzes Mastered</small>
+        </div>
+        <div class="stat-box">
+          <strong id="statFavsCount">0</strong>
+          <small>Saved Places</small>
+        </div>
+      </div>
+
+      <div class="passport-stamps-section">
+        <h4>Collected Passport Stamps</h4>
+        <div class="stamps-grid" id="passportStampsGrid">
+          <!-- JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
