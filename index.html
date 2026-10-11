@@ -231,14 +231,36 @@
             Back to Explore
           </button>
 
-          <div class="sidebar-place-card" id="sidebarPlaceCard">
-            <div class="sidebar-place-img-wrapper">
-              <img id="sidebarPlaceImg" src="" alt="Place" referrerpolicy="no-referrer">
-              <div class="fallback-gradient" id="sidebarPlaceFallback"></div>
+          <div class="sidebar-map-card">
+            <div class="map-iframe-wrapper">
+              <iframe
+                id="sidebarMapFrame"
+                src=""
+                width="100%"
+                height="180"
+                style="border:0;"
+                loading="lazy"
+                allowfullscreen=""
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Landmark Google Map">
+              </iframe>
             </div>
-            <div class="sidebar-place-meta">
-              <h4 id="sidebarPlaceName">Taj Mahal</h4>
-              <p id="sidebarPlaceCity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg> <span id="sidebarPlaceLocationText">Agra, India</span></p>
+            <div class="sidebar-map-footer">
+              <div class="map-place-info">
+                <svg class="map-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span id="sidebarMapLocationText">Delhi, India</span>
+              </div>
+              <a id="sidebarMapsLink" href="#" target="_blank" rel="noopener noreferrer" class="open-maps-btn">
+                <span>Open in Maps</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </a>
             </div>
           </div>
 

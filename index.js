@@ -55,6 +55,40 @@ const MURF_LANG_MAP = {
   }
 };
 
+// Complete Google Maps Embeds Mapping for 30 Curated Landmarks
+const PLACE_MAP_EMBEDS = {
+  "Taj Mahal": "https://maps.google.com/maps?q=Taj+Mahal+Agra+India&output=embed",
+  "Red Fort": "https://maps.google.com/maps?q=Red+Fort+Delhi+India&output=embed",
+  "Hampi": "https://maps.google.com/maps?q=Hampi+Karnataka+India&output=embed",
+  "India Gate": "https://maps.google.com/maps?q=India+Gate+New+Delhi+India&output=embed",
+  "Qutub Minar": "https://maps.google.com/maps?q=Qutub+Minar+Delhi+India&output=embed",
+  "Hawa Mahal": "https://maps.google.com/maps?q=Hawa+Mahal+Jaipur+India&output=embed",
+  "Amer Fort": "https://maps.google.com/maps?q=Amer+Fort+Jaipur+India&output=embed",
+  "Gateway of India": "https://maps.google.com/maps?q=Gateway+of+India+Mumbai+India&output=embed",
+  "Varanasi Ghats": "https://maps.google.com/maps?q=Dashashwamedh+Ghat+Varanasi+India&output=embed",
+  "Golden Temple": "https://maps.google.com/maps?q=Golden+Temple+Amritsar+India&output=embed",
+  "Mysore Palace": "https://maps.google.com/maps?q=Mysore+Palace+Mysuru+India&output=embed",
+  "Meenakshi Amman Temple": "https://maps.google.com/maps?q=Meenakshi+Amman+Temple+Madurai+India&output=embed",
+  "Charminar": "https://maps.google.com/maps?q=Charminar+Hyderabad+India&output=embed",
+  "Kerala Backwaters": "https://maps.google.com/maps?q=Kerala+Backwaters+Alappuzha+India&output=embed",
+  "Dal Lake": "https://maps.google.com/maps?q=Dal+Lake+Srinagar+India&output=embed",
+  "Eiffel Tower": "https://maps.google.com/maps?q=Eiffel+Tower+Paris+France&output=embed",
+  "Colosseum": "https://maps.google.com/maps?q=Colosseum+Rome+Italy&output=embed",
+  "Statue of Liberty": "https://maps.google.com/maps?q=Statue+of+Liberty+New+York+USA&output=embed",
+  "Great Wall of China": "https://maps.google.com/maps?q=Great+Wall+of+China&output=embed",
+  "Machu Picchu": "https://maps.google.com/maps?q=Machu+Picchu+Peru&output=embed",
+  "Sydney Opera House": "https://maps.google.com/maps?q=Sydney+Opera+House+Australia&output=embed",
+  "Burj Khalifa": "https://maps.google.com/maps?q=Burj+Khalifa+Dubai+UAE&output=embed",
+  "Pyramids of Giza": "https://maps.google.com/maps?q=Pyramids+of+Giza+Egypt&output=embed",
+  "Mount Fuji": "https://maps.google.com/maps?q=Mount+Fuji+Japan&output=embed",
+  "Santorini": "https://maps.google.com/maps?q=Santorini+Greece&output=embed",
+  "Niagara Falls": "https://maps.google.com/maps?q=Niagara+Falls+Canada+USA&output=embed",
+  "Grand Canyon": "https://maps.google.com/maps?q=Grand+Canyon+Arizona+USA&output=embed",
+  "Petra": "https://maps.google.com/maps?q=Petra+Jordan&output=embed",
+  "Angkor Wat": "https://maps.google.com/maps?q=Angkor+Wat+Cambodia&output=embed",
+  "Big Ben": "https://maps.google.com/maps?q=Big+Ben+London+UK&output=embed"
+};
+
 function getSelectedLanguageKey() {
   const raw = (DOM.guideLang ? DOM.guideLang.value : "") || "English";
   if (raw.includes("Hindi") || raw.includes("हिंदी")) return "Hindi";
@@ -119,6 +153,9 @@ function cacheDOMElements() {
   DOM.sidebarPlaceFallback = document.getElementById("sidebarPlaceFallback");
   DOM.sidebarPlaceName = document.getElementById("sidebarPlaceName");
   DOM.sidebarPlaceLocationText = document.getElementById("sidebarPlaceLocationText");
+  DOM.sidebarMapFrame = document.getElementById("sidebarMapFrame");
+  DOM.sidebarMapLocationText = document.getElementById("sidebarMapLocationText");
+  DOM.sidebarMapsLink = document.getElementById("sidebarMapsLink");
   DOM.sideNavBtns = document.querySelectorAll(".side-nav-btn");
   DOM.subviews = document.querySelectorAll(".subview");
   
@@ -428,13 +465,24 @@ function switchDashboardSubview(subviewId) {
 
 async function loadPlacesDatabase() {
   try {
-    console.log(`Fetching places from: ${API_BASE}/places`);
-    const res = await fetch(`${API_BASE}/places`, { cache: "no-store" });
-    if (!res.ok) {
-      const errBody = await res.text().catch(() => "");
-      throw new Error(`Failed to fetch places: HTTP ${res.status} - ${errBody}`);
+    let data = null;
+    try {
+      const res = await fetch(`${API_BASE}/places`, { cache: "no-store" });
+      if (res.ok) {
+        data = await res.json();
+      }
+    } catch (_) {}
+
+    if (!data) {
+      try {
+        const fallbackRes = await fetch("places.json");
+        if (fallbackRes.ok) {
+          data = await fallbackRes.json();
+        }
+      } catch (_) {}
     }
-    const data = await res.json();
+
+    if (!data) throw new Error("Failed to fetch places from API and places.json");
     STATE.places = data;
     renderFeaturedCarousel();
     renderExploreGrid();
@@ -549,21 +597,54 @@ function createPlaceCardElement(place) {
    PLACE DASHBOARD CONTROLLER
    ========================================================================== */
 
+function renderPlaceDetails(place) {
+  if (!place) return;
+  const embedUrl = PLACE_MAP_EMBEDS[place.name] || 
+    `https://maps.google.com/maps?q=${encodeURIComponent(place.name + " " + (place.city || "") + " " + place.country)}&output=embed`;
+  const directUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + " " + (place.city || "") + " " + place.country)}`;
+
+  const frame = document.getElementById("sidebarMapFrame");
+  if (frame && frame.src !== embedUrl) {
+    frame.src = embedUrl;
+  }
+
+  const locText = document.getElementById("sidebarMapLocationText");
+  if (locText) {
+    locText.textContent = `${place.city ? place.city + ", " : ""}${place.country}`;
+  }
+
+  const mapLink = document.getElementById("sidebarMapsLink");
+  if (mapLink) {
+    mapLink.href = directUrl;
+  }
+}
+
+function selectPlace(place) {
+  openPlaceDashboard(place);
+}
+
 function openPlaceDashboard(place) {
   STATE.selectedPlace = place;
   STATE.currentBundle = null;
   STATE.chatHistory = [];
 
   // Update Hero & Sidebar Metadata
-  DOM.sidebarPlaceName.textContent = place.name;
-  DOM.sidebarPlaceLocationText.textContent = `${place.city}, ${place.country}`;
-  DOM.sidebarPlaceImg.src = place.image;
-  DOM.sidebarPlaceImg.onerror = function() {
-    this.style.display = 'none';
-    if (DOM.sidebarPlaceFallback) DOM.sidebarPlaceFallback.style.display = 'flex';
-  };
-  DOM.sidebarPlaceFallback.style.background = place.gradient;
-  DOM.sidebarPlaceFallback.textContent = place.emoji;
+  if (DOM.sidebarPlaceName) DOM.sidebarPlaceName.textContent = place.name;
+  if (DOM.sidebarPlaceLocationText) DOM.sidebarPlaceLocationText.textContent = `${place.city}, ${place.country}`;
+  if (DOM.sidebarPlaceImg) {
+    DOM.sidebarPlaceImg.src = place.image;
+    DOM.sidebarPlaceImg.onerror = function() {
+      this.style.display = 'none';
+      if (DOM.sidebarPlaceFallback) DOM.sidebarPlaceFallback.style.display = 'flex';
+    };
+  }
+  if (DOM.sidebarPlaceFallback) {
+    DOM.sidebarPlaceFallback.style.background = place.gradient;
+    DOM.sidebarPlaceFallback.textContent = place.emoji;
+  }
+
+  // Dynamically update Google Map embed & directions link
+  renderPlaceDetails(place);
 
   DOM.detailHeroImage.src = place.image;
   DOM.detailHeroImage.onerror = function() {
